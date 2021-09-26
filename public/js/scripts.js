@@ -29,7 +29,7 @@ const handleSubmit = (event) => {
   if (inputValue !== '') {
     socket.emit('submit_chat', inputValue);
     // 화면에 그리기
-    drawNewChat(`me: ${inputValue}`); // 내가 쓴 채팅 내용
+    drawNewChat(`me: ${inputValue}`, true); // 내가 쓴 채팅 내용
     event.target.elements[0].value = ''; // 입력하고 입력창 비우기
   }
 };
@@ -38,15 +38,24 @@ const handleSubmit = (event) => {
 const drawHelloStranger = (username) =>
   (helloStrangerElement.innerText = `Hello ${username} Stranger :)`);
 
-const drawNewChat = (message) => {
+const drawNewChat = (message, isMe = false) => {
   const wrapperChatBox = document.createElement('div');
-  const chatBox = `
-  <div>
-    ${message}
-  </div>`;
-
-  wrapperChatBox.innerHTML = chatBox; // HTML코드 삽입(message와 div태그)
-  chattingBoxElement.append(wrapperChatBox); // 하위 돔요소 삽입
+  wrapperChatBox.className = 'clearfix';
+  let chatBox;
+  if (!isMe)
+    chatBox = `
+      <div class='bg-gray-300 w-3/4 mx-4 my-2 p-2 rounded-lg clearfix break-all'>
+        ${message}
+      </div>
+      `;
+  else
+    chatBox = `
+      <div class='bg-white w-3/4 ml-auto mr-4 my-2 p-2 rounded-lg clearfix break-all'>
+        ${message}
+      </div>
+      `;
+  wrapperChatBox.innerHTML = chatBox;
+  chattingBoxElement.append(wrapperChatBox);
 };
 
 function helloUser() {
@@ -59,7 +68,7 @@ function helloUser() {
 
 function init() {
   helloUser();
-  formElement.addEventListener('submit', handleSubmit);
+  formElement.addEventListener('submit', handleSubmit); // 이벤트 연결
 }
 
 init();
